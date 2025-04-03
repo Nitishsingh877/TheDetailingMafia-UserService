@@ -54,4 +54,15 @@ public class UserController {
     }
 
 
+    @PutMapping("/update/profile")
+    public UserProfileResponse updateProfile(@RequestBody UserProfileResponse userProfileResponse, Authentication authentication)  {
+        String email = authentication.getName();
+
+        UserProfileResponse updatedProfile = userService.updateUserProfile(email,userProfileResponse);
+        return updatedProfile;
+
+    }
+
+
+
 }
