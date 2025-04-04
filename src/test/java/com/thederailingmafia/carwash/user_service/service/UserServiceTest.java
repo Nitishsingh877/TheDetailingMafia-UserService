@@ -38,7 +38,7 @@ class UserServiceTest {
 
         //assert
         assertNotNull(result);
-        assertEquals("Nitish 8989", result.getName());
+        assertEquals("Nitish 8989", result.getName(),"Username not found");
     }
         @Test
         void testFindUserByEmail_NotFound() {

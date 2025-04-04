@@ -1,6 +1,8 @@
 package com.thederailingmafia.carwash.user_service.service;
 
 import com.thederailingmafia.carwash.user_service.dto.*;
+import com.thederailingmafia.carwash.user_service.exception.PassswordNotFoundException;
+import com.thederailingmafia.carwash.user_service.exception.UserNotFoundException;
 import com.thederailingmafia.carwash.user_service.model.UserModel;
 import com.thederailingmafia.carwash.user_service.model.UserRole;
 import com.thederailingmafia.carwash.user_service.repository.UserRepository;
@@ -53,16 +55,16 @@ public  class UserService {
     }
 
     @Transactional
-    public LoginResponseDto loginUser(String email, String password) throws Exception, AuthenticationException, UsernameNotFoundException {
+    public LoginResponseDto loginUser(String email, String password) throws Exception {
         UserModel user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new Exception("User with email " + email + " not found"));
+                .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found"));
 
         if(!user.getAuth().equals("Email")) {
-           throw new Exception("Wrong way of login");
+           throw new UserNotFoundException(email +" -> This is Wrong email. please try again");
         }
 
         if(!passwordEncoder.matches(password, user.getPassword())) {
-            throw new Exception("Wrong password");
+            throw new PassswordNotFoundException("This is Wrong email or password. Please try again");
         }
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getUserRole().name());
@@ -73,13 +75,13 @@ public  class UserService {
 
     public UserModel getUserProfile(String email) {
         UserModel user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return user;
     }
 
     public UserProfileResponse updateUserProfile(String email, UserProfileResponse userProfileResponse) {
 
-        UserModel user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        UserModel user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if(userProfileResponse.getName() != null) {
             user.setName(userProfileResponse.getName());
@@ -94,6 +96,6 @@ public  class UserService {
 
     public UserModel findUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 }
