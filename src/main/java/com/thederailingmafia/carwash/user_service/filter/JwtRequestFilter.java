@@ -1,6 +1,6 @@
 package com.thederailingmafia.carwash.user_service.filter;
 
-import com.thederailingmafia.carwash.user_service.service.CustomeUserDetailsService;
+import com.thederailingmafia.carwash.user_service.service.CustomUserDetailsService;
 import com.thederailingmafia.carwash.user_service.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
