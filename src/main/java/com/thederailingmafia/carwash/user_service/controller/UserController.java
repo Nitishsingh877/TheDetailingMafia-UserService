@@ -4,6 +4,7 @@ import com.thederailingmafia.carwash.user_service.dto.LoginResponseDto;
 import com.thederailingmafia.carwash.user_service.dto.UserDto;
 import com.thederailingmafia.carwash.user_service.dto.UserProfileResponse;
 import com.thederailingmafia.carwash.user_service.model.UserModel;
+import com.thederailingmafia.carwash.user_service.model.UserRole;
 import com.thederailingmafia.carwash.user_service.repository.UserRepository;
 import com.thederailingmafia.carwash.user_service.service.UserService;
 import com.thederailingmafia.carwash.user_service.util.JwtUtil;
@@ -41,6 +42,20 @@ public class UserController {
         String token = jwtUtil.generateToken(user.getEmail(), user.getUserRole().name());
         log.info("signup for the user " + user.getEmail());
         return new LoginResponseDto(token,userDto);
+    }
+
+    @PostMapping("/admin/signUp")
+    @Operation(summary = "Admin Sign Up", description = "Registers a new admin user (requires admin privileges)")
+    public LoginResponseDto adminSignUp(@RequestBody UserDto userDto, Authentication authentication) {
+        // Ensure only admins can create admins
+        if (!authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new SecurityException("Only admins can create admin accounts");
+        }
+        userDto.setUserRole(UserRole.ADMIN); // Force ROLE_ADMIN
+        UserModel user = userService.saveUser(userDto, "Email");
+        String token = jwtUtil.generateToken(user.getEmail(), user.getUserRole().name());
+        return new LoginResponseDto(token, userDto);
     }
 
     @PostMapping("/login")

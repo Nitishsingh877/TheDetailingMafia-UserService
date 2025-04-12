@@ -31,10 +31,22 @@ public  class UserService {
     private WasherService washerService;
 
     @Autowired
+    private AdminService adminService;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     public UserModel saveUser(UserDto userDto, String authToken) {
+        // Validate role
+        if (userDto.getUserRole() == null) {
+            throw new IllegalArgumentException("Role is required");
+        }
+        // Check if email exists
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new RuntimeException("Email already in use");
+        }
         UserModel userModel = new UserModel(userDto.getName(), userDto.getPassword(), userDto.getEmail(), userDto.getUserRole(),null, null,authToken);
+
         if(authToken.equals("Email")) {
             userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
         }
@@ -48,6 +60,13 @@ public  class UserService {
         if(userModel.getUserRole() == UserRole.WASHER){
             WasherDto washerDto = new WasherDto(userDto);
             washerService.SaveWasher(userModel,washerDto);
+
+        }
+
+        if(userModel.getUserRole() == UserRole.ADMIN) {
+            AdminDto adminDto = new AdminDto(userDto);
+            adminService.createAdmin(userModel,adminDto);
+
 
         }
         return userModel;
