@@ -77,4 +77,18 @@ public  class UserService {
         return user;
     }
 
+    public UserProfileResponse updateUserProfile(String email, UserProfileResponse userProfileResponse) {
+
+        UserModel user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+        if(userProfileResponse.getName() != null) {
+            user.setName(userProfileResponse.getName());
+        }
+        if(userProfileResponse.getEmail() != null) {
+            user.setEmail(userProfileResponse.getEmail());
+        }
+
+        userRepository.save(user);
+        return new UserProfileResponse(user.getName(),user.getEmail(),user.getUserRole());
+    }
 }
