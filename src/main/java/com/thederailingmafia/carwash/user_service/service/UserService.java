@@ -1,24 +1,23 @@
 package com.thederailingmafia.carwash.user_service.service;
 
-import com.thederailingmafia.carwash.user_service.dto.CustomerDto;
-import com.thederailingmafia.carwash.user_service.dto.LoginResponseDto;
-import com.thederailingmafia.carwash.user_service.dto.UserDto;
-import com.thederailingmafia.carwash.user_service.dto.WasherDto;
+import com.thederailingmafia.carwash.user_service.dto.*;
 import com.thederailingmafia.carwash.user_service.model.UserModel;
 import com.thederailingmafia.carwash.user_service.model.UserRole;
 import com.thederailingmafia.carwash.user_service.repository.UserRepository;
 import com.thederailingmafia.carwash.user_service.util.JwtUtil;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
+public  class UserService {
     @Autowired
     private UserRepository userRepository;
 
@@ -71,4 +70,11 @@ public class UserService {
 
         return new LoginResponseDto(token,userDto);
     }
+
+    public UserModel getUserProfile(String email) {
+        UserModel user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user;
+    }
+
 }
