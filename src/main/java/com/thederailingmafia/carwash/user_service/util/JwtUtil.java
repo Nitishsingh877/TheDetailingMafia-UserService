@@ -35,12 +35,12 @@ public class JwtUtil {
         Claims claims = getClaimsFromToken(token);
         return claims.getSubject();
     }
-//
-//    // Extract role from token
-//    public String getRoleFromToken(String token) {
-//        Claims claims = getClaimsFromToken(token);
-//        return (String) claims.get("role");
-//    }
+
+    // Extract role from token
+    public String getRoleFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return (String) claims.get("role");
+    }
 
     // Validate token
     public boolean validateToken(String token,String email) {
