@@ -13,7 +13,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -37,7 +41,7 @@ public class UserController {
 
     @PostMapping("/signUp")
     @Operation(summary = "User Sign Up", description = "Registers a new user and returns JWT token")
-    public LoginResponseDto signUp(@RequestBody UserDto userDto) {
+    public LoginResponseDto signUp(@RequestBody UserDto userDto, Authentication authentication) {
         UserModel user = userService.saveUser(userDto,"Email");
         String token = jwtUtil.generateToken(user.getEmail(), user.getUserRole().name());
         log.info("signup for the user " + user.getEmail());
@@ -88,5 +92,13 @@ public class UserController {
         UserProfileResponse updatedProfile = userService.updateUserProfile(email,userProfileResponse);
         return updatedProfile;
 
+    }
+
+    @GetMapping("/washers")
+    public List<String> getWashers() {
+        return userRepository.findByUserRole(UserRole.valueOf("WASHER"))
+                .stream()
+                .map(UserModel::getEmail)
+                .collect(Collectors.toList());
     }
 }
