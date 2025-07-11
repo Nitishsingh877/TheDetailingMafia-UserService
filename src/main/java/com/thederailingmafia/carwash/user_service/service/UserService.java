@@ -1,7 +1,9 @@
 package com.thederailingmafia.carwash.user_service.service;
 
 import com.thederailingmafia.carwash.user_service.dto.*;
+import com.thederailingmafia.carwash.user_service.exception.EmailExistException;
 import com.thederailingmafia.carwash.user_service.exception.PassswordNotFoundException;
+import com.thederailingmafia.carwash.user_service.exception.RoleNotFoundException;
 import com.thederailingmafia.carwash.user_service.exception.UserNotFoundException;
 import com.thederailingmafia.carwash.user_service.model.UserModel;
 import com.thederailingmafia.carwash.user_service.model.UserRole;
@@ -21,10 +23,11 @@ import org.springframework.stereotype.Service;
 @Service
 public  class UserService {
     @Autowired
+//    Automatically injects dependencies
     private UserRepository userRepository;
 
 
-    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
     @Autowired
     private CustomerService customerService;
     @Autowired
@@ -39,11 +42,11 @@ public  class UserService {
     public UserModel saveUser(UserDto userDto, String authToken) {
         // Validate role
         if (userDto.getUserRole() == null) {
-            throw new IllegalArgumentException("Role is required");
+            throw new RoleNotFoundException("Role is required");
         }
         // Check if email exists
         if (userRepository.existsByEmail(userDto.getEmail())) {
-            throw new RuntimeException("Email already in use");
+            throw new EmailExistException("Email already exists. Please log in.");
         }
         UserModel userModel = new UserModel(userDto.getName(), userDto.getPassword(), userDto.getEmail(), userDto.getUserRole(),null, null,authToken);
 
@@ -74,6 +77,7 @@ public  class UserService {
     }
 
     @Transactional
+    //used because if user logged in changes will commit in db else it will rollback to intial state.
     public LoginResponseDto loginUser(String email, String password) throws Exception {
         UserModel user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found"));
@@ -87,7 +91,7 @@ public  class UserService {
         }
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getUserRole().name());
-        UserDto userDto = new UserDto(user.getName(), user.getEmail(), null,null,user.getUserRole());
+        UserDto userDto = new UserDto(user.getName(), user.getEmail(), null,user.getUserRole());
 
         return new LoginResponseDto(token,userDto);
     }

@@ -36,12 +36,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            //SCH is responsible for storing and retrieving the security context of the currently authenticated user.
             if (jwtUtil.validateToken(jwt, email)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         email,
                         null,
                         List.of(new SimpleGrantedAuthority("ROLE_" + role))
                 );
+                //The UsernamePasswordAuthenticationToken class in Spring Security is used for authentication based on a username and password.
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }

@@ -28,7 +28,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(a -> a.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // A stateless system does not retain any information about previous interactions.
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/signUp", "/api/users/login", "/api/users/health","/api/users/washers").permitAll()

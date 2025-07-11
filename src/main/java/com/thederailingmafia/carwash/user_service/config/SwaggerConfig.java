@@ -19,7 +19,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI().info(
-                new Info().title("The Detailing Mafia")
+                new Info().title("The Detailing Mafia-UserService")
                         .description("By Nitish Singh")
         ).servers(Arrays.asList((new Server().url("http://localhost:8081").description("Local Server")),
                 new Server().url("http://carwash-thederailingmafia.com").description("Carwash Thederailingmafia Server"))
