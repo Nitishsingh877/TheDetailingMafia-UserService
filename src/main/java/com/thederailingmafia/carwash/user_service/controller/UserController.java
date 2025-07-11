@@ -6,12 +6,16 @@ import com.thederailingmafia.carwash.user_service.dto.UserProfileResponse;
 import com.thederailingmafia.carwash.user_service.model.UserModel;
 import com.thederailingmafia.carwash.user_service.model.UserRole;
 import com.thederailingmafia.carwash.user_service.repository.UserRepository;
+import com.thederailingmafia.carwash.user_service.repository.WasherRepository;
 import com.thederailingmafia.carwash.user_service.service.UserService;
 import com.thederailingmafia.carwash.user_service.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +35,8 @@ public class UserController {
     private JwtUtil jwtUtil;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private WasherRepository washerRepository;
 
     @GetMapping("/health")
     @Operation(summary = "Check API Health", description = "Returns 'OK' if API is running")
@@ -41,11 +47,17 @@ public class UserController {
 
     @PostMapping("/signUp")
     @Operation(summary = "User Sign Up", description = "Registers a new user and returns JWT token")
-    public LoginResponseDto signUp(@RequestBody UserDto userDto, Authentication authentication) {
-        UserModel user = userService.saveUser(userDto,"Email");
-        String token = jwtUtil.generateToken(user.getEmail(), user.getUserRole().name());
-        log.info("signup for the user " + user.getEmail());
-        return new LoginResponseDto(token,userDto);
+    public ResponseEntity<?> signUp(@Valid @RequestBody UserDto userDto) {
+        try {
+            System.out.println("hello mai abhi aaya");
+            UserModel user = userService.saveUser(userDto,"Email");
+            String token = jwtUtil.generateToken(user.getEmail(), user.getUserRole().name());
+            log.info("signup for the user " + user.getEmail());
+            return  ResponseEntity.ok(new LoginResponseDto(token,userDto));
+        }catch (Exception e){
+          //  e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Signup failed: " + e.getMessage());
+        }
     }
 
     @PostMapping("/admin/signUp")

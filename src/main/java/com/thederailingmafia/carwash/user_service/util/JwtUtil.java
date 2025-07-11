@@ -23,8 +23,8 @@ public class JwtUtil {
 
     public String generateToken(String email,String role) {
         return Jwts.builder()
-                .setSubject(email)
-                .claim("role",role)
+                .setSubject(email) //email set krega
+                .claim("role",role) //set role
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+expiration))
                 .signWith(secretKey)
@@ -57,6 +57,7 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
     }
+//    - Claims are used to store metadata about the token like email role iat eat.
 
 
 }
