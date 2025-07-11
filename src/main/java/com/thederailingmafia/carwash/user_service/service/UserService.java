@@ -27,7 +27,7 @@ public  class UserService {
     private UserRepository userRepository;
 
 
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
     @Autowired
     private CustomerService customerService;
     @Autowired

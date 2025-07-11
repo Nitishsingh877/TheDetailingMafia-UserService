@@ -6,7 +6,6 @@ import com.thederailingmafia.carwash.user_service.dto.UserProfileResponse;
 import com.thederailingmafia.carwash.user_service.model.UserModel;
 import com.thederailingmafia.carwash.user_service.model.UserRole;
 import com.thederailingmafia.carwash.user_service.repository.UserRepository;
-import com.thederailingmafia.carwash.user_service.repository.WasherRepository;
 import com.thederailingmafia.carwash.user_service.service.UserService;
 import com.thederailingmafia.carwash.user_service.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,8 +34,6 @@ public class UserController {
     private JwtUtil jwtUtil;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private WasherRepository washerRepository;
 
     @GetMapping("/health")
     @Operation(summary = "Check API Health", description = "Returns 'OK' if API is running")
