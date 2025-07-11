@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.User;
 
 import java.util.Optional;
 
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceTest {
 
 
-    @Mock //mock the repository create a non-real repo
+    @Mock //mock the repository create a non real repo
     private UserRepository userRepository;
 
     @InjectMocks //inject mock into services
